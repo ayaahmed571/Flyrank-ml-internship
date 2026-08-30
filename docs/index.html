@@ -169,6 +169,24 @@
         font-size: 14px;
     }
 
+   .chart {
+    margin: 25px 0;
+    text-align: center;
+}
+
+   .chart img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+}
+
+   .chart p {
+    color: #6b7280;
+    font-size: 14px;
+    margin-top: 8px;
+}
+
     @media (max-width: 700px) {
         .hero {
             padding: 35px 25px;
@@ -434,12 +452,11 @@
         </div>
     </div>
 
-    <div class="chart-placeholder">
-        <strong>Figure 1 — Decision Tree vs Week-4 Baseline</strong>
-        <br>
-        The final paper artifact compares measured precision for the two
-        approaches on the grouped evaluation data.
-    </div>
+    <div class="chart">
+    <img src="model_vs_baseline.png"
+         alt="Decision Tree vs Week-4 Baseline precision comparison">
+    <p><strong>Figure 1.</strong> Decision Tree vs Week-4 Baseline precision.</p>
+</div>
 
     <p>
         The grouped validation result was lower than the earlier Week-5
@@ -565,12 +582,11 @@
         </tbody>
     </table>
 
-    <div class="chart-placeholder">
-        <strong>Figure 2 — Ranked Action Distribution</strong>
-        <br>
-        The figure shows how the baseline prioritization rule distributes
-        content across the recommended actions.
-    </div>
+   <div class="chart">
+    <img src="action_distribution.png"
+         alt="Ranked Action Distribution">
+    <p><strong>Figure 2.</strong> Distribution of recommended actions.</p>
+</div>
 
     <p>
         The ranking is intended to help reviewers focus attention on a
