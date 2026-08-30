@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Content Refresh Prioritization — FlyRank ML Internship</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.7;
+        color: #1f2937;
+        background: #f7f8fa;
+    }
+
+    .container {
+        max-width: 1050px;
+        margin: 0 auto;
+        padding: 40px 24px 70px;
+    }
+
+    .hero {
+        background: #111827;
+        color: white;
+        padding: 55px 50px;
+        border-radius: 18px;
+        margin-bottom: 35px;
+    }
+
+    .hero h1 {
+        font-size: 42px;
+        line-height: 1.15;
+        margin: 0 0 18px;
+    }
+
+    .hero p {
+        font-size: 19px;
+        color: #d1d5db;
+        max-width: 800px;
+        margin: 0;
+    }
+
+    .meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 25px;
+    }
+
+    .pill {
+        background: #374151;
+        padding: 7px 13px;
+        border-radius: 999px;
+        font-size: 14px;
+    }
+
+    section {
+        background: white;
+        padding: 35px 40px;
+        margin-bottom: 24px;
+        border-radius: 16px;
+        border: 1px solid #e5e7eb;
+    }
+
+    h2 {
+        color: #111827;
+        font-size: 27px;
+        margin-top: 0;
+        border-bottom: 1px solid #e5e7eb;
+        padding-bottom: 10px;
+    }
+
+    h3 {
+        color: #374151;
+        margin-top: 28px;
+    }
+
+    .abstract {
+        font-size: 18px;
+    }
+
+    .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        margin: 25px 0;
+    }
+
+    .metric {
+        background: #f3f4f6;
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+    }
+
+    .metric strong {
+        display: block;
+        font-size: 30px;
+        color: #111827;
+    }
+
+    .metric span {
+        font-size: 14px;
+        color: #6b7280;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
+
+    th, td {
+        text-align: left;
+        padding: 12px 14px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    th {
+        background: #f3f4f6;
+    }
+
+    .callout {
+        background: #f9fafb;
+        border-left: 4px solid #6b7280;
+        padding: 18px 20px;
+        margin: 20px 0;
+    }
+
+    .chart-placeholder {
+        background: #f9fafb;
+        border: 1px dashed #9ca3af;
+        border-radius: 12px;
+        padding: 30px;
+        text-align: center;
+        color: #6b7280;
+        margin: 25px 0;
+    }
+
+    ul {
+        padding-left: 25px;
+    }
+
+    code {
+        background: #f3f4f6;
+        padding: 2px 6px;
+        border-radius: 5px;
+    }
+
+    a {
+        color: #2563eb;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    footer {
+        text-align: center;
+        color: #6b7280;
+        padding: 25px;
+        font-size: 14px;
+    }
+
+    @media (max-width: 700px) {
+        .hero {
+            padding: 35px 25px;
+        }
+
+        .hero h1 {
+            font-size: 31px;
+        }
+
+        section {
+            padding: 25px 22px;
+        }
+
+        .metric-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+```
+<header class="hero">
+    <h1>Content Refresh Prioritization Using Interpretable Machine Learning</h1>
+
+    <p>
+        A decision-support workflow for prioritizing content pages for human review
+        using historical freshness and search-performance signals.
+    </p>
+
+    <div class="meta">
+        <div class="pill">FlyRank ML Internship</div>
+        <div class="pill">30,000 content records</div>
+        <div class="pill">6 model features</div>
+        <div class="pill">Decision Tree</div>
+    </div>
+</header>
+
+
+<section>
+    <h2>Title + Abstract</h2>
+
+    <p class="abstract">
+        <strong>Research question:</strong>
+        Can historical content freshness and performance signals help prioritize
+        content pages for human review?
+    </p>
+
+    <p class="abstract">
+        This study evaluates whether observable content and search-performance
+        signals can support a ranked content-review workflow. A transparent
+        rule-based baseline was compared with an interpretable Decision Tree
+        classifier using six content and performance features. The model was
+        evaluated using a grouped train/test split by client, producing 23,837
+        training rows and 6,163 test rows with zero client overlap. Under this
+        evaluation setup, the grouped Decision Tree achieved measured precision
+        of 0.547 compared with 0.509 for the baseline, an improvement of
+        approximately 0.038 precision points. The result provides directional
+        evidence that the model may support prioritization beyond the simple
+        baseline, but it does not establish causation or guarantee future
+        performance improvement.
+    </p>
+</section>
+
+
+<section>
+    <h2>1. Introduction / Problem Statement</h2>
+
+    <p>
+        Content teams may have many pages that could potentially benefit from
+        review or refresh attention. Reviewing every page with equal priority
+        is inefficient, so a practical decision-support system should help
+        identify which pages deserve attention first.
+    </p>
+
+    <p>
+        This analysis investigates whether historical content freshness and
+        search-performance signals can be used to prioritize pages for human
+        review.
+    </p>
+
+    <div class="callout">
+        <strong>Decision supported:</strong>
+        The output ranks pages for human review or refresh consideration.
+        It does not automatically modify content and is not intended to
+        establish causal relationships.
+    </div>
+</section>
+
+
+<section>
+    <h2>2. Data</h2>
+
+    <p>
+        This work uses the FlyRank ML Internship dataset. The working
+        content-level dataset contains 30,000 records and 44 columns.
+    </p>
+
+    <h3>Signals used</h3>
+
+    <ul>
+        <li>Content age</li>
+        <li>Days since last update</li>
+        <li>Impressions over the observed 90-day period</li>
+        <li>Average search position</li>
+        <li>Click-through rate (CTR)</li>
+        <li>Word count</li>
+    </ul>
+
+    <h3>Excluded fields</h3>
+
+    <p>
+        The declining outcome label and fields directly related to its
+        construction were excluded from the model features.
+    </p>
+
+    <ul>
+        <li><code>is_declining_label</code></li>
+        <li><code>trend_direction</code></li>
+        <li><code>trend_pct</code></li>
+    </ul>
+
+    <p>
+        These fields were excluded because they represent the outcome or
+        information directly related to the outcome. No client names,
+        private search queries, or private client information are included
+        in the analysis.
+    </p>
+</section>
+
+
+<section>
+    <h2>3. Methodology</h2>
+
+    <h3>Features</h3>
+
+    <p>
+        The final model uses six features:
+        <code>content_age_days</code>,
+        <code>days_since_last_update</code>,
+        <code>impressions_90d</code>,
+        <code>avg_position</code>,
+        <code>ctr</code>, and
+        <code>word_count</code>.
+    </p>
+
+    <h3>Label definition</h3>
+
+    <p>
+        The binary target <code>is_declining_label</code> was defined from
+        the observed <code>trend_direction</code> field. The label equals
+        1 when the observed trend direction was "down" and 0 otherwise.
+        It was used only as the prediction target.
+    </p>
+
+    <h3>Baseline</h3>
+
+    <p>
+        The Week-4 baseline is a transparent rule-based prioritization score
+        based on content staleness and observed visibility. Pages that had
+        not been updated recently and still had measurable visibility
+        received higher priority.
+    </p>
+
+    <h3>Model</h3>
+
+    <p>
+        A Decision Tree classifier with a maximum depth of 5 was used as the
+        Week-5 model. The method was selected because it is interpretable
+        and can capture simple non-linear relationships between the
+        available content signals and the declining label.
+    </p>
+
+    <h3>Validation design</h3>
+
+    <p>
+        The main evaluation used a grouped split by <code>client_id</code>.
+        A <code>GroupShuffleSplit</code> with 20% test data and
+        <code>random_state=42</code> produced:
+    </p>
+
+    <div class="metric-grid">
+        <div class="metric">
+            <strong>23,837</strong>
+            <span>Training rows</span>
+        </div>
+
+        <div class="metric">
+            <strong>6,163</strong>
+            <span>Test rows</span>
+        </div>
+
+        <div class="metric">
+            <strong>0</strong>
+            <span>Clients in both sets</span>
+        </div>
+    </div>
+
+    <p>
+        This grouped design prevents the same client from appearing in both
+        the training and test sets.
+    </p>
+
+    <h3>Leakage checks</h3>
+
+    <p>
+        The final feature set was checked for direct outcome leakage.
+        No potential leakage candidates were included among the six model
+        features. In particular, <code>is_declining_label</code>,
+        <code>trend_direction</code>, and <code>trend_pct</code> were kept
+        outside the feature set.
+    </p>
+</section>
+
+
+<section>
+    <h2>4. Results</h2>
+
+    <p>
+        The Decision Tree was compared with the Week-4 baseline using
+        precision on the same grouped evaluation setup.
+    </p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Method</th>
+                <th>Precision</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr>
+                <td>Week-4 Baseline</td>
+                <td>0.509</td>
+            </tr>
+
+            <tr>
+                <td>Decision Tree (Grouped)</td>
+                <td>0.547</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="metric-grid">
+        <div class="metric">
+            <strong>0.547</strong>
+            <span>Grouped Decision Tree precision</span>
+        </div>
+
+        <div class="metric">
+            <strong>0.509</strong>
+            <span>Baseline precision</span>
+        </div>
+
+        <div class="metric">
+            <strong>+0.038</strong>
+            <span>Measured precision difference</span>
+        </div>
+    </div>
+
+    <div class="chart-placeholder">
+        <strong>Figure 1 — Decision Tree vs Week-4 Baseline</strong>
+        <br>
+        The final paper artifact compares measured precision for the two
+        approaches on the grouped evaluation data.
+    </div>
+
+    <p>
+        The grouped validation result was lower than the earlier Week-5
+        estimate of 0.579 obtained before applying the grouped-by-client
+        validation constraint. The decrease suggests that the earlier
+        estimate was somewhat optimistic.
+    </p>
+
+    <p>
+        The grouped result is therefore treated as the more honest estimate
+        for this analysis. The measured improvement over the baseline is
+        directional evidence that the model may provide useful
+        decision-support under this evaluation setup.
+    </p>
+</section>
+
+
+<section>
+    <h2>5. Limitations &amp; Honest Framing</h2>
+
+    <ul>
+        <li>
+            The model identifies associations in the observed data; it does
+            not establish causation.
+        </li>
+
+        <li>
+            The grouped validation result is based on one train/test split.
+        </li>
+
+        <li>
+            Precision may change when the content population or data
+            distribution changes.
+        </li>
+
+        <li>
+            The available features do not capture every reason why content
+            performance may decline.
+        </li>
+
+        <li>
+            A recommendation to review or refresh a page does not mean that
+            the refresh will improve its future performance.
+        </li>
+
+        <li>
+            The model was evaluated on the available dataset and does not
+            represent a production deployment.
+        </li>
+
+        <li>
+            The output should be treated as decision-support and reviewed by
+            a human before taking action.
+        </li>
+    </ul>
+
+    <div class="callout">
+        <strong>Honest framing:</strong>
+        The findings are observed and measured within the stated evaluation
+        setup. They should be interpreted as directional evidence for
+        prioritization rather than as a production guarantee or causal claim.
+    </div>
+</section>
+
+
+<section>
+    <h2>6. Ranked Recommendations</h2>
+
+    <p>
+        The action playbook uses the transparent baseline score to prioritize
+        content for human review.
+    </p>
+
+    <h3>Priority action — Review for refresh</h3>
+
+    <p>
+        Pages that are both stale and have observed visibility receive the
+        highest priority.
+    </p>
+
+    <p>
+        <strong>Reason code:</strong>
+        <code>STALE_WITH_VISIBILITY</code>
+    </p>
+
+    <h3>Lower priority</h3>
+
+    <p>
+        Pages that are stale but have lower observed visibility receive
+        lower priority.
+    </p>
+
+    <p>
+        <strong>Reason code:</strong>
+        <code>STALE_LOW_VISIBILITY</code>
+    </p>
+
+    <h3>Observed action distribution</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Recommended action</th>
+                <th>Content items</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr>
+                <td>No immediate action</td>
+                <td>29,826</td>
+            </tr>
+
+            <tr>
+                <td>Lower priority</td>
+                <td>157</td>
+            </tr>
+
+            <tr>
+                <td>Review for refresh</td>
+                <td>17</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="chart-placeholder">
+        <strong>Figure 2 — Ranked Action Distribution</strong>
+        <br>
+        The figure shows how the baseline prioritization rule distributes
+        content across the recommended actions.
+    </div>
+
+    <p>
+        The ranking is intended to help reviewers focus attention on a
+        smaller set of pages first. Scores and reason codes are
+        prioritization signals, not final decisions.
+    </p>
+</section>
+
+
+<section>
+    <h2>7. Reproducibility</h2>
+
+    <p>
+        The analysis notebook contains the data preparation, feature
+        definition, grouped validation, model training, baseline comparison,
+        ranked recommendation queue, and artifact generation.
+    </p>
+
+    <p>
+        <strong>Repository:</strong>
+        <a href="https://github.com/ayaahmed571/Flyrank-ml-internship" target="_blank">
+            GitHub repository
+        </a>
+    </p>
+
+    <p>
+        <strong>Notebook:</strong>
+        <a href="https://github.com/ayaahmed571/Flyrank-ml-internship/blob/main/work/notebooks/capstone.ipynb" target="_blank">
+            capstone.ipynb
+        </a>
+    </p>
+
+    <p>
+        The published artifacts are intended to allow readers to inspect
+        the methodology, assumptions, validation design, and measured
+        results without exposing private client information.
+    </p>
+</section>
+
+
+<section>
+    <h2>8. Acknowledgments &amp; Data Credit</h2>
+
+    <p>
+        Built on the FlyRank ML Internship dataset.
+    </p>
+
+    <p>
+        Data source:
+        <a href="https://flyrank.ai" target="_blank">FlyRank</a>
+    </p>
+
+    <p>
+        This project was completed as part of the FlyRank ML Internship
+        track and follows the public-safe analysis and decision-support
+        framing required for the project.
+    </p>
+</section>
+
+
+<footer>
+    Applied ML Research Artifact · FlyRank ML Internship
+</footer>
+```
+
+</div>
+
+</body>
+</html>
